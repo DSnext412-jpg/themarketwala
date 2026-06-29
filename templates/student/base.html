@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="pt-16 min-h-screen bg-slate-50">
+    <div class="flex">
+        <aside class="hidden lg:block w-64 min-h-screen bg-white border-r border-slate-100 fixed left-0 top-16 p-4 overflow-y-auto">
+            <div class="text-center mb-6 pt-4">
+                <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-3">
+                    <span class="text-2xl font-bold text-white font-space">{{ current_user.name[0]|upper }}</span>
+                </div>
+                <h3 class="font-semibold text-slate-900">{{ current_user.name }}</h3>
+                <span class="badge bg-emerald-100 text-emerald-700 text-xs mt-1">Student</span>
+            </div>
+            <nav class="space-y-1">
+                <a href="{{ url_for('student.overview') }}" class="sidebar-link {% if request.endpoint == 'student.overview' %}active{% endif %}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Overview
+                </a>
+                <a href="{{ url_for('student.learning_progress') }}" class="sidebar-link {% if request.endpoint == 'student.learning_progress' %}active{% endif %}">
+                    <i data-lucide="trending-up" class="w-5 h-5"></i> Learning Progress
+                </a>
+                <a href="{{ url_for('student.bookmarks') }}" class="sidebar-link {% if request.endpoint == 'student.bookmarks' %}active{% endif %}">
+                    <i data-lucide="bookmark" class="w-5 h-5"></i> Bookmarks
+                </a>
+                <a href="{{ url_for('student.profile') }}" class="sidebar-link {% if request.endpoint == 'student.profile' %}active{% endif %}">
+                    <i data-lucide="user" class="w-5 h-5"></i> Study Profile
+                </a>
+                <a href="{{ url_for('student.settings') }}" class="sidebar-link {% if request.endpoint == 'student.settings' %}active{% endif %}">
+                    <i data-lucide="settings" class="w-5 h-5"></i> Settings
+                </a>
+            </nav>
+        </aside>
+
+        <div class="flex-1 lg:ml-64">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {% block dashboard_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex justify-around py-2">
+    <a href="{{ url_for('student.overview') }}" class="flex flex-col items-center gap-1 px-3 py-1 {% if request.endpoint == 'student.overview' %}text-emerald-600{% else %}text-slate-400{% endif %}">
+        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Home</span>
+    </a>
+    <a href="{{ url_for('student.learning_progress') }}" class="flex flex-col items-center gap-1 px-3 py-1 {% if request.endpoint == 'student.learning_progress' %}text-emerald-600{% else %}text-slate-400{% endif %}">
+        <i data-lucide="trending-up" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Progress</span>
+    </a>
+    <a href="{{ url_for('student.bookmarks') }}" class="flex flex-col items-center gap-1 px-3 py-1 {% if request.endpoint == 'student.bookmarks' %}text-emerald-600{% else %}text-slate-400{% endif %}">
+        <i data-lucide="bookmark" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Bookmarks</span>
+    </a>
+    <a href="{{ url_for('student.profile') }}" class="flex flex-col items-center gap-1 px-3 py-1 {% if request.endpoint == 'student.profile' %}text-emerald-600{% else %}text-slate-400{% endif %}">
+        <i data-lucide="user" class="w-5 h-5"></i>
+        <span class="text-[10px] font-medium">Profile</span>
+    </a>
+</div>
+{% endblock %}

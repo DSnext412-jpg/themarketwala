@@ -1,0 +1,82 @@
+{% extends 'admin/base.html' %}
+{% block title %}Manage Blogs - The Market Wala{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-space font-bold text-slate-900">Blogs</h1>
+            <p class="text-slate-500">Manage blog posts</p>
+        </div>
+        <a href="{{ url_for('admin.create_blog') }}" class="btn-primary inline-flex items-center gap-2 text-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i> Create Blog
+        </a>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100">
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Title</th>
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Status</th>
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Date</th>
+                        <th class="text-right px-6 py-4 font-semibold text-slate-600">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for blog in blogs %}
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                {% if blog.featured_image %}
+                                <img src="{{ blog.featured_image }}" alt="" class="w-10 h-10 rounded-lg object-cover">
+                                {% else %}
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-5 h-5 text-purple-600"></i>
+                                </div>
+                                {% endif %}
+                                <span class="font-medium text-slate-900">{{ blog.title }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if blog.is_published %}
+                            <span class="badge bg-emerald-100 text-emerald-700">Published</span>
+                            {% else %}
+                            <span class="badge bg-amber-100 text-amber-700">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-slate-500">{{ blog.created_at|format_date('%b %d, %Y') if blog.created_at else 'N/A' }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ url_for('admin.edit_blog', blog_id=blog.id) }}" class="text-blue-500 hover:text-blue-700 transition p-1.5 rounded-lg hover:bg-blue-50">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                </a>
+                                <form action="{{ url_for('admin.toggle_blog_publish') }}" method="POST" class="inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="blog_id" value="{{ blog.id }}">
+                                    <button type="submit" class="text-xs border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50 transition font-medium">
+                                        {% if blog.is_published %}Unpublish{% else %}Publish{% endif %}
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('admin.delete_blog') }}" method="POST" class="inline" onsubmit="return confirm('Delete this blog post permanently?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="blog_id" value="{{ blog.id }}">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 transition p-1.5 rounded-lg hover:bg-red-50">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-slate-500">No blog posts yet. <a href="{{ url_for('admin.create_blog') }}" class="text-emerald-600 font-medium hover:underline">Create one</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

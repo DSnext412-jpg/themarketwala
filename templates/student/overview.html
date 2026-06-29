@@ -1,0 +1,95 @@
+{% extends 'student/base.html' %}
+{% block title %}Dashboard - The Market Wala{% endblock %}
+
+{% block dashboard_content %}
+<div class="space-y-8">
+    <div>
+        <h1 class="text-2xl font-space font-bold text-slate-900">Welcome back, {{ current_user.name }}!</h1>
+        <p class="text-slate-500">Here's your learning overview</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card p-5">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-sm text-slate-500">Enrolled Courses</span>
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-emerald-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold text-slate-900 font-space">{{ purchases|length }}</p>
+        </div>
+        <div class="card p-5">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-sm text-slate-500">Completed</span>
+                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center"><i data-lucide="check-circle" class="w-5 h-5 text-blue-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold text-slate-900 font-space">{{ progress_data|selectattr('completed', 'eq', True)|list|length }}</p>
+        </div>
+        <div class="card p-5">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-sm text-slate-500">In Progress</span>
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center"><i data-lucide="loader-2" class="w-5 h-5 text-amber-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold text-slate-900 font-space">{{ progress_data|selectattr('completed', 'eq', False)|list|length }}</p>
+        </div>
+        <div class="card p-5">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-sm text-slate-500">Notifications</span>
+                <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center"><i data-lucide="bell" class="w-5 h-5 text-purple-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold text-slate-900 font-space">{{ notifications|length }}</p>
+        </div>
+    </div>
+
+    {% if recent_purchases %}
+    <div class="card">
+        <div class="p-6 border-b border-slate-100">
+            <h2 class="font-space font-semibold text-lg text-slate-900">Recent Enrollments</h2>
+        </div>
+        <div class="divide-y divide-slate-100">
+            {% for p in recent_purchases %}
+            <a href="{{ url_for('courses.course_detail', slug=p.course.slug) }}" class="flex items-center gap-4 p-4 hover:bg-slate-50 transition-all">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center shrink-0">
+                    {% if p.course.thumbnail %}<img src="{{ p.course.thumbnail }}" class="w-full h-full object-cover rounded-xl">{% else %}<i data-lucide="bar-chart-3" class="w-6 h-6 text-emerald-400"></i>{% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium text-slate-900 truncate">{{ p.course.title }}</p>
+                    <p class="text-xs text-slate-500">Enrolled {{ p.purchased_at|format_date('%b %d, %Y') }}</p>
+                </div>
+                <span class="text-sm text-emerald-600 font-medium">Continue →</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if notifications %}
+    <div class="card">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+            <h2 class="font-space font-semibold text-lg text-slate-900">Notifications</h2>
+            <button onclick="markRead()" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">Mark all read</button>
+        </div>
+        <div class="divide-y divide-slate-100">
+            {% for n in notifications %}
+            <div class="p-4 flex items-start gap-3 {% if not n.read %}bg-emerald-50/50{% endif %}">
+                <i data-lucide="{% if 'success' in n.title|lower %}check-circle{% elif 'payment' in n.title|lower %}credit-card{% else %}bell{% endif %}" class="w-5 h-5 text-emerald-600 mt-0.5"></i>
+                <div>
+                    <p class="font-medium text-sm text-slate-900">{{ n.title }}</p>
+                    <p class="text-xs text-slate-500 mt-0.5">{{ n.message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function markRead() {
+    const form = new FormData();
+    form.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
+    fetch('{{ url_for("student.mark_notifications_read") }}', { method: 'POST', body: form })
+    .then(() => window.location.reload());
+}
+</script>
+{% endblock %}

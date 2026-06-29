@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us - The Market Wala{% endblock %}
+
+{% block content %}
+<section class="pt-28 pb-20 gradient-dark relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.1),transparent_70%)]"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">Contact</span>
+        <h1 class="text-4xl sm:text-5xl font-space font-bold text-white mb-6">Get in <span class="gradient-text">Touch</span></h1>
+        <p class="text-lg text-slate-400">Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+    </div>
+</section>
+
+<section class="py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 max-w-3xl mx-auto">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                    <i data-lucide="mail" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-slate-900">Email</h3>
+                    <p class="text-slate-500 text-sm">shingare.baban2025@gmail.com</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                    <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-slate-900">WhatsApp</h3>
+                    <p class="text-slate-500 text-sm">Join our community for instant support</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-slate-900">Instagram</h3>
+                    <p class="text-slate-500 text-sm">the_market_wala_</p>
+                </div>
+            </div>
+            <div class="card p-6">
+                <h3 class="font-semibold text-slate-900 mb-2">Office Hours</h3>
+                <p class="text-sm text-slate-500">Monday - Friday: 10:00 AM - 7:00 PM IST</p>
+                <p class="text-sm text-slate-500">Saturday: 10:00 AM - 2:00 PM IST</p>
+                <p class="text-sm text-slate-500">Sunday: Closed</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

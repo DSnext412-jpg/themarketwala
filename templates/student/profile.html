@@ -1,0 +1,39 @@
+{% extends 'student/base.html' %}
+{% block title %}Profile - The Market Wala{% endblock %}
+
+{% block dashboard_content %}
+<div class="max-w-2xl mx-auto space-y-6">
+    <h1 class="text-2xl font-space font-bold text-slate-900">Study Profile</h1>
+
+    <div class="card p-8">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-4">
+                <span class="text-3xl font-bold text-white font-space">{{ current_user.name[0]|upper }}</span>
+            </div>
+            <h2 class="text-xl font-semibold text-slate-900">{{ current_user.name }}</h2>
+            <p class="text-sm text-slate-500">{{ current_user.email }}</p>
+            <span class="badge bg-emerald-100 text-emerald-700 mt-2">Student</span>
+        </div>
+
+        <form method="POST" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Full Name</label>
+                <input type="text" name="name" value="{{ current_user.name }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Experience Level</label>
+                <select name="experience_level" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900">
+                    <option value="beginner" {% if current_user.experience_level == 'beginner' %}selected{% endif %}>Beginner</option>
+                    <option value="intermediate" {% if current_user.experience_level == 'intermediate' %}selected{% endif %}>Intermediate</option>
+                    <option value="advanced" {% if current_user.experience_level == 'advanced' %}selected{% endif %}>Advanced</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Interests (comma separated)</label>
+                <textarea name="interests" rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 resize-none">{{ current_user.interests or '' }}</textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full">Update Profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

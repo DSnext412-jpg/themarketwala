@@ -1,0 +1,63 @@
+{% extends 'student/base.html' %}
+{% block title %}Learning Progress - The Market Wala{% endblock %}
+
+{% block dashboard_content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-space font-bold text-slate-900">Learning Progress</h1>
+
+    {% if courses %}
+    <div class="space-y-4">
+        {% for course in courses %}
+        {% set prog = progress_data.get(course.id) %}
+        <div class="card p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center shrink-0">
+                    {% if course.thumbnail %}<img src="{{ course.thumbnail }}" class="w-full h-full object-cover rounded-xl">{% else %}<i data-lucide="bar-chart-3" class="w-8 h-8 text-emerald-400"></i>{% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-semibold text-slate-900">{{ course.title }}</h3>
+                    <div class="mt-2">
+                        <div class="flex items-center justify-between text-sm mb-1">
+                            <span class="text-slate-500">{{ (prog.completion_percentage|default(0))|int }}% complete</span>
+                            {% if prog and prog.completed %}<span class="badge bg-emerald-100 text-emerald-700 text-xs">Completed</span>{% endif %}
+                        </div>
+                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: {{ prog.completion_percentage|default(0) }}%"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-3">
+                        <button onclick="updateProgress({{ course.id }}, 25)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">25%</button>
+                        <button onclick="updateProgress({{ course.id }}, 50)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">50%</button>
+                        <button onclick="updateProgress({{ course.id }}, 75)" class="text-xs px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">75%</button>
+                        <button onclick="updateProgress({{ course.id }}, 100)" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-all">Completed</button>
+                    </div>
+                </div>
+                <a href="{{ url_for('courses.course_detail', slug=course.slug) }}" class="btn-outline text-sm py-2 px-4 shrink-0">Continue</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16">
+        <i data-lucide="book-open" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
+        <h3 class="text-xl font-semibold text-slate-600">No courses yet</h3>
+        <p class="text-slate-400 mt-2">Purchase a course to start learning!</p>
+        <a href="{{ url_for('courses.course_list') }}" class="btn-primary inline-flex items-center gap-2 mt-6">Browse Courses</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updateProgress(courseId, percentage) {
+    const form = new FormData();
+    form.append('course_id', courseId);
+    form.append('percentage', percentage);
+    form.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
+    fetch('{{ url_for("student.update_progress") }}', { method: 'POST', body: form })
+    .then(r => r.json())
+    .then(() => window.location.reload());
+}
+</script>
+{% endblock %}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{% block title %}The Market Wala{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Democratizing the Stock Market - Learn, Trade, Succeed{% endblock %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #34d399;
+        }
+        * { font-family: 'Inter', sans-serif; }
+        .font-space { font-family: 'Space Grotesk', sans-serif; }
+        .font-mono-custom { font-family: 'JetBrains Mono', monospace; }
+        body { background-color: #f8fafc; }
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1); }
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+        ::selection { background: #10b981; color: white; }
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981, #34d399, #6ee7b7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #064e3b, #047857, #059669);
+        }
+        .gradient-dark {
+            background: linear-gradient(135deg, #0f172a, #1e293b, #0f172a);
+        }
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.35);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #10b981;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            border: 2px solid #10b981;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: #10b981;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            color: #64748b;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        .markdown-content h1 { font-size: 2rem; font-weight: 700; margin: 1.5rem 0 1rem; color: #0f172a; }
+        .markdown-content h2 { font-size: 1.5rem; font-weight: 700; margin: 1.25rem 0 0.75rem; color: #0f172a; }
+        .markdown-content h3 { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0.5rem; color: #1e293b; }
+        .markdown-content h4 { font-size: 1.1rem; font-weight: 600; margin: 0.75rem 0 0.5rem; color: #334155; }
+        .markdown-content p { margin: 0.75rem 0; line-height: 1.75; color: #475569; }
+        .markdown-content ul, .markdown-content ol { margin: 0.75rem 0; padding-left: 1.5rem; }
+        .markdown-content li { margin: 0.25rem 0; line-height: 1.75; color: #475569; }
+        .markdown-content blockquote {
+            border-left: 4px solid #10b981;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            background: #f0fdf4;
+            border-radius: 0 0.5rem 0.5rem 0;
+            color: #166534;
+            font-style: italic;
+        }
+        .markdown-content code {
+            background: #f1f5f9;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #0f172a;
+        }
+        .markdown-content pre {
+            background: #0f172a;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .markdown-content pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+        }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+        .markdown-content th { background: #f8fafc; font-weight: 600; }
+        .markdown-content a { color: #10b981; text-decoration: underline; }
+        .markdown-content img { max-width: 100%; border-radius: 0.75rem; margin: 1rem 0; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="antialiased text-slate-800">
+    {% include 'components/navbar.html' %}
+
+    <main class="min-h-screen">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-sm" x-data>
+                    {% for category, message in messages %}
+                        <div class="alert-{{ category }} px-4 py-3 rounded-xl shadow-lg fade-in flex items-center justify-between gap-2"
+                             style="{% if category == 'success' %}background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0{% elif category == 'error' %}background:#fef2f2;color:#991b1b;border:1px solid #fecaca{% else %}background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe{% endif %}">
+                            <span class="text-sm font-medium">{{ message }}</span>
+                            <button @click="$el.parentElement.remove()" class="text-current opacity-60 hover:opacity-100">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'components/footer.html' %}
+
+    <script>
+        lucide.createIcons();
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('navbar', () => ({
+                mobileOpen: false,
+                toggle() { this.mobileOpen = !this.mobileOpen; }
+            }));
+        });
+
+        document.querySelectorAll('form').forEach(form => {
+            const csrf = document.querySelector('meta[name="csrf-token"]');
+            if (csrf && !form.querySelector('input[name="csrf_token"]')) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'csrf_token';
+                input.value = csrf.content;
+                form.appendChild(input);
+            }
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

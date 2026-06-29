@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ blog.seo_title or blog.title }} - The Market Wala{% endblock %}
+{% block meta_description %}{{ blog.seo_description or blog.excerpt or blog.content[:160] }}{% endblock %}
+
+{% block content %}
+<article class="pt-28 pb-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <span class="text-sm text-emerald-600 font-medium">{{ blog.created_at|format_date('%B %d, %Y') }}</span>
+            <h1 class="text-3xl sm:text-4xl font-space font-bold text-slate-900 mt-2">{{ blog.title }}</h1>
+        </div>
+
+        {% if blog.featured_image %}
+        <div class="rounded-2xl overflow-hidden mb-10">
+            <img src="{{ blog.featured_image }}" alt="{{ blog.title }}" class="w-full h-auto">
+        </div>
+        {% endif %}
+
+        <div class="markdown-content">
+            {{ content_html|safe }}
+        </div>
+    </div>
+</article>
+
+{% if related %}
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-space font-bold text-slate-900 mb-8">Related Articles</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            {% for r in related %}
+            <a href="{{ url_for('blogs.blog_detail', slug=r.slug) }}" class="card overflow-hidden hover-lift group">
+                <div class="h-40 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
+                    {% if r.featured_image %}<img src="{{ r.featured_image }}" class="w-full h-full object-cover">{% else %}<i data-lucide="file-text" class="w-12 h-12 text-emerald-300"></i>{% endif %}
+                </div>
+                <div class="p-5">
+                    <span class="text-xs text-emerald-600">{{ r.created_at|format_date('%b %d, %Y') }}</span>
+                    <h3 class="font-semibold text-slate-900 mt-1 group-hover:text-emerald-600 transition-colors">{{ r.title }}</h3>
+                    <span class="text-sm text-emerald-600 font-medium mt-2 inline-block">Read →</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

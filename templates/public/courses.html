@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}Courses - The Market Wala{% endblock %}
+
+{% block content %}
+<section class="pt-28 pb-16 gradient-dark relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.1),transparent_70%)]"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-10">
+            <span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">Our Programs</span>
+            <h1 class="text-4xl sm:text-5xl font-space font-bold text-white">Explore <span class="gradient-text">Courses</span></h1>
+            <p class="text-slate-400 mt-4 max-w-2xl mx-auto">Choose from our curated programs designed to take your trading skills to the next level.</p>
+        </div>
+
+        <form method="GET" class="max-w-3xl mx-auto">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                    <input type="text" name="search" value="{{ request.args.get('search', '') }}" placeholder="Search courses..." class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-700 bg-slate-800/50 text-white placeholder-slate-500 focus:border-emerald-500">
+                </div>
+                <select name="category" class="px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/50 text-white focus:border-emerald-500">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if request.args.get('category') == cat %}selected{% endif %}>{{ cat|title }}</option>
+                    {% endfor %}
+                </select>
+                <select name="difficulty" class="px-4 py-3 rounded-xl border border-slate-700 bg-slate-800/50 text-white focus:border-emerald-500">
+                    <option value="">All Levels</option>
+                    {% for diff in difficulties %}
+                    <option value="{{ diff }}" {% if request.args.get('difficulty') == diff %}selected{% endif %}>{{ diff|title }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-primary px-6">Search</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% if courses %}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for course in courses %}
+            {% set is_purchased = current_user.is_authenticated and course.purchases.filter_by(user_id=current_user.id, status='completed').first() %}
+            {% set is_bookmarked = current_user.is_authenticated and course.bookmarks.filter_by(user_id=current_user.id).first() %}
+            <div class="card overflow-hidden hover-lift group">
+                <a href="{{ url_for('courses.course_detail', slug=course.slug) }}">
+                    <div class="relative h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center overflow-hidden">
+                        {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        {% else %}
+                        <i data-lucide="bar-chart-3" class="w-16 h-16 text-emerald-300"></i>
+                        {% endif %}
+                        <div class="absolute top-3 left-3 flex gap-2 flex-wrap">
+                            {% if course.category %}<span class="badge bg-white/90 text-emerald-700 text-xs">{{ course.category }}</span>{% endif %}
+                            <span class="badge bg-white/90 text-slate-700 text-xs">{{ course.difficulty }}</span>
+                        </div>
+                        {% if is_purchased %}
+                        <div class="absolute top-3 right-3">
+                            <span class="badge bg-emerald-500 text-white text-xs">Purchased</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="p-6">
+                    <div class="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                        {% if course.reading_time %}<span><i data-lucide="clock" class="w-3 h-3 inline"></i> {{ course.reading_time }}</span>{% endif %}
+                        <span><i data-lucide="users" class="w-3 h-3 inline"></i> {{ course.purchase_count() }} enrolled</span>
+                    </div>
+                    <a href="{{ url_for('courses.course_detail', slug=course.slug) }}">
+                        <h3 class="font-space font-semibold text-lg text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors">{{ course.title }}</h3>
+                    </a>
+                    <p class="text-sm text-slate-500 mb-4 line-clamp-2">{{ course.description[:120] }}{% if course.description and course.description|length > 120 %}...{% endif %}</p>
+                    {% if course.tag_list() %}
+                    <div class="flex flex-wrap gap-1.5 mb-4">
+                        {% for tag in course.tag_list()[:3] %}
+                        <span class="badge bg-slate-100 text-slate-600 text-xs">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="flex items-center justify-between">
+                        <span class="text-2xl font-bold text-slate-900 font-space">₹{{ "%.0f"|format(course.price) }}</span>
+                        <div class="flex gap-2">
+                            {% if current_user.is_authenticated %}
+                            <button onclick="toggleBookmark({{ course.id }}, this)" class="p-2 rounded-lg hover:bg-slate-100 transition-all" title="Bookmark">
+                                <i data-lucide="bookmark" class="w-5 h-5 {% if is_bookmarked %}text-emerald-500 fill-emerald-500{% else %}text-slate-400{% endif %}"></i>
+                            </button>
+                            {% endif %}
+                            {% if is_purchased %}
+                            <a href="{{ url_for('courses.course_detail', slug=course.slug) }}" class="btn-primary text-sm py-2 px-4">Access Classroom</a>
+                            {% else %}
+                            <a href="{{ url_for('courses.course_detail', slug=course.slug) }}" class="btn-primary text-sm py-2 px-4">Buy Program</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-20">
+            <i data-lucide="search-x" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
+            <h3 class="text-xl font-semibold text-slate-600">No Courses Found</h3>
+            <p class="text-slate-400 mt-2">Try adjusting your search or filter criteria.</p>
+            <a href="{{ url_for('courses.course_list') }}" class="btn-primary inline-flex items-center gap-2 mt-6">Clear Filters</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function toggleBookmark(courseId, btn) {
+    const form = new FormData();
+    form.append('course_id', courseId);
+    form.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
+    fetch('{{ url_for("student.toggle_bookmark") }}', { method: 'POST', body: form })
+    .then(r => r.json())
+    .then(data => {
+        const icon = btn.querySelector('i');
+        if (data.bookmarked) {
+            icon.classList.add('text-emerald-500', 'fill-emerald-500');
+            icon.classList.remove('text-slate-400');
+        } else {
+            icon.classList.remove('text-emerald-500', 'fill-emerald-500');
+            icon.classList.add('text-slate-400');
+        }
+    });
+}
+</script>
+{% endblock %}

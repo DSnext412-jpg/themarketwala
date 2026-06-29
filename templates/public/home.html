@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% block title %}The Market Wala - Democratizing the Stock Market{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen flex items-center overflow-hidden pt-20">
+    <div class="gradient-dark absolute inset-0"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.15),transparent_70%)]"></div>
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-8 fade-in">
+                <span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">The Ultimate Financial Learning Engine</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-space font-bold text-white leading-tight">
+                    Democratizing<br>
+                    <span class="gradient-text">the Stock Market</span>
+                </h1>
+                <p class="text-lg text-slate-400 leading-relaxed max-w-xl">Learn professional trading strategies, understand market psychology, and build wealth systematically. Premium education for everyone.</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="https://chat.whatsapp.com/" target="_blank" class="btn-primary text-base px-8 py-3.5 inline-flex items-center gap-2">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i> Join WhatsApp Community
+                    </a>
+                    <a href="{{ url_for('main.about') }}" class="btn-outline text-base px-8 py-3.5 inline-flex items-center gap-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600">
+                        Our Mission <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hidden lg:block relative fade-in fade-in-delay-2">
+                <div class="card overflow-hidden max-w-sm ml-auto rotate-3 hover:rotate-0 transition-transform duration-500" style="height: 420px;">
+                    <img src="{{ url_for('static', filename='images/profile01.jpg') }}" alt="Profile" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <span class="badge bg-emerald-100 text-emerald-700 mb-4">Why Choose Us</span>
+            <h2 class="text-3xl sm:text-4xl font-space font-bold text-slate-900">Everything You Need to Succeed</h2>
+            <p class="text-slate-500 mt-4 max-w-2xl mx-auto">A complete ecosystem designed to take you from a beginner to a confident trader.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="card p-8 hover-lift text-center">
+                <div class="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5">
+                    <i data-lucide="book-open" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-space font-semibold text-lg text-slate-900 mb-3">Structured Courses</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Step-by-step curriculum designed by professional traders. From basics to advanced strategies.</p>
+            </div>
+            <div class="card p-8 hover-lift text-center">
+                <div class="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5">
+                    <i data-lucide="trending-up" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-space font-semibold text-lg text-slate-900 mb-3">Real Market Outlooks</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Weekly market analysis and live trading sessions with real-time market insights.</p>
+            </div>
+            <div class="card p-8 hover-lift text-center">
+                <div class="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5">
+                    <i data-lucide="target" class="w-7 h-7 text-white"></i>
+                </div>
+                <h3 class="font-space font-semibold text-lg text-slate-900 mb-3">Learning Progress</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Track your progress, bookmark lessons, and pick up right where you left off.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if courses %}
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-12">
+            <div>
+                <span class="badge bg-emerald-100 text-emerald-700 mb-4">Featured Courses</span>
+                <h2 class="text-3xl sm:text-4xl font-space font-bold text-slate-900">Start Your Journey</h2>
+            </div>
+            <a href="{{ url_for('courses.course_list') }}" class="btn-outline text-sm py-2 px-4">View All <i data-lucide="arrow-right" class="w-4 h-4 inline ml-1"></i></a>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for course in courses %}
+            <div class="card overflow-hidden hover-lift group">
+                <div class="relative h-48 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center overflow-hidden">
+                    {% if course.thumbnail %}
+                    <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <i data-lucide="bar-chart-3" class="w-16 h-16 text-emerald-300"></i>
+                    {% endif %}
+                    <div class="absolute top-3 left-3 flex gap-2">
+                        {% if course.category %}<span class="badge bg-white/90 text-emerald-700 text-xs">{{ course.category }}</span>{% endif %}
+                        <span class="badge bg-white/90 text-slate-700 text-xs">{{ course.difficulty }}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                        {% if course.reading_time %}<span><i data-lucide="clock" class="w-3 h-3 inline"></i> {{ course.reading_time }}</span>{% endif %}
+                        <span><i data-lucide="users" class="w-3 h-3 inline"></i> {{ course.purchase_count() }} enrolled</span>
+                    </div>
+                    <h3 class="font-space font-semibold text-lg text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors">{{ course.title }}</h3>
+                    <p class="text-sm text-slate-500 mb-4 line-clamp-2">{{ course.description[:120] }}{% if course.description and course.description|length > 120 %}...{% endif %}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-2xl font-bold text-slate-900 font-space">₹{{ "%.0f"|format(course.price) }}</span>
+                        <a href="{{ url_for('courses.course_detail', slug=course.slug) }}" class="btn-primary text-sm py-2 px-4">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if blogs %}
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-12">
+            <div>
+                <span class="badge bg-emerald-100 text-emerald-700 mb-4">Latest Insights</span>
+                <h2 class="text-3xl sm:text-4xl font-space font-bold text-slate-900">From Our Blog</h2>
+            </div>
+            <a href="{{ url_for('blogs.blog_list') }}" class="btn-outline text-sm py-2 px-4">View All <i data-lucide="arrow-right" class="w-4 h-4 inline ml-1"></i></a>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+            {% for blog in blogs %}
+            <a href="{{ url_for('blogs.blog_detail', slug=blog.slug) }}" class="card overflow-hidden hover-lift group flex flex-col sm:flex-row">
+                <div class="sm:w-48 h-48 sm:h-auto bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center overflow-hidden shrink-0">
+                    {% if blog.featured_image %}
+                    <img src="{{ blog.featured_image }}" alt="{{ blog.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% else %}
+                    <i data-lucide="file-text" class="w-12 h-12 text-emerald-300"></i>
+                    {% endif %}
+                </div>
+                <div class="p-6 flex flex-col justify-center">
+                    <span class="text-xs text-emerald-600 font-medium mb-2">{{ blog.created_at|format_date('%b %d, %Y') }}</span>
+                    <h3 class="font-space font-semibold text-lg text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors">{{ blog.title }}</h3>
+                    <p class="text-sm text-slate-500 line-clamp-2">{{ blog.excerpt or blog.content[:150] }}{% if not blog.excerpt and blog.content and blog.content|length > 150 %}...{% endif %}</p>
+                    <span class="text-sm font-medium text-emerald-600 mt-3 inline-flex items-center gap-1">Read More <i data-lucide="arrow-right" class="w-3 h-3"></i></span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="py-20 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <span class="badge bg-emerald-100 text-emerald-700 mb-4">FAQ</span>
+            <h2 class="text-3xl sm:text-4xl font-space font-bold text-slate-900">Frequently Asked Questions</h2>
+        </div>
+        <div class="space-y-4" x-data="{ active: null }">
+            {% set faqs = [
+                ('Is this suitable for complete beginners?', 'Absolutely! Our courses are designed from the ground up. We start with basic concepts and gradually move to advanced topics. No prior trading experience is required.'),
+                ('How are the courses delivered?', 'Courses include pre-recorded video lessons, live trading sessions, practical assignments, and downloadable resources. You get lifetime access to all materials.'),
+                ('What is the refund policy?', 'We offer a 7-day money-back guarantee. If you are not satisfied with the course content, you can request a full refund within 7 days of purchase.'),
+                ('Will I get a certificate?', 'Yes! Upon successful completion of any course, you will receive a verifiable certificate of completion that you can share on LinkedIn.')
+            ] %}
+            {% for question, answer in faqs %}
+            <div class="card" x-data="{ open: false }">
+                <button @click="open = !open; if(open) active = {{ loop.index }} else active = null" class="w-full flex items-center justify-between p-5 text-left">
+                    <span class="font-medium text-slate-900 pr-4">{{ question }}</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 shrink-0 transition-transform" :class="{'rotate-180': open}"></i>
+                </button>
+                <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="px-5 pb-5">
+                    <p class="text-slate-500 text-sm leading-relaxed">{{ answer }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

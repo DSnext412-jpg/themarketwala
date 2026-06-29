@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}About Us - The Market Wala{% endblock %}
+
+{% block content %}
+<section class="pt-28 pb-20 gradient-dark relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.1),transparent_70%)]"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">About Us</span>
+        <h1 class="text-4xl sm:text-5xl font-space font-bold text-white mb-6">Our Mission to Democratize<br><span class="gradient-text">the Stock Market</span></h1>
+        <p class="text-lg text-slate-400 max-w-2xl mx-auto">We believe financial education should be accessible, practical, and transformative. Every person deserves the opportunity to build wealth through informed trading and investing.</p>
+    </div>
+</section>
+
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="badge bg-emerald-100 text-emerald-700 mb-4">Our Story</span>
+                <h2 class="text-3xl font-space font-bold text-slate-900 mb-6">Why We Started The Market Wala</h2>
+                <p class="text-slate-600 leading-relaxed mb-4">The Market Wala was born from a simple observation: the stock market is the greatest wealth creation vehicle, yet most people never learn how to use it properly. Traditional financial education is either too academic, too expensive, or too fragmented.</p>
+                <p class="text-slate-600 leading-relaxed mb-4">We set out to build a complete learning ecosystem that combines professional trading knowledge, practical skills, and community support — all at an affordable price.</p>
+                <p class="text-slate-600 leading-relaxed">Our courses are designed by traders who have been in the trenches, not just theorists. We teach what actually works in the real market.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <span class="badge bg-emerald-100 text-emerald-700 mb-4">Core Principles</span>
+            <h2 class="text-3xl sm:text-4xl font-space font-bold text-slate-900">What Drives Us</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center p-8">
+                <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5">
+                    <i data-lucide="shield" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="font-space font-semibold text-xl text-slate-900 mb-3">Risk-First Education</h3>
+                <p class="text-slate-500">We teach risk management before profit. Protecting capital is the first lesson in every course.</p>
+            </div>
+            <div class="text-center p-8">
+                <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5">
+                    <i data-lucide="users" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="font-space font-semibold text-xl text-slate-900 mb-3">Community Driven</h3>
+                <p class="text-slate-500">Learning is better together. Our WhatsApp community and live sessions create a collaborative environment.</p>
+            </div>
+            <div class="text-center p-8">
+                <div class="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-5">
+                    <i data-lucide="refresh-cw" class="w-8 h-8 text-white"></i>
+                </div>
+                <h3 class="font-space font-semibold text-xl text-slate-900 mb-3">Always Up-to-Date</h3>
+                <p class="text-slate-500">Market evolves, and so do we. Our content is continuously updated to reflect current market conditions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 gradient-bg">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl sm:text-4xl font-space font-bold text-white mb-6">Ready to Start Your Trading Journey?</h2>
+        <p class="text-emerald-100 mb-8 max-w-2xl mx-auto">Join thousands of students who have transformed their understanding of the stock market.</p>
+        <a href="{{ url_for('courses.course_list') }}" class="inline-flex items-center gap-2 bg-white text-emerald-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-emerald-50 transition-all text-lg">Explore Courses <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
+    </div>
+</section>
+{% endblock %}

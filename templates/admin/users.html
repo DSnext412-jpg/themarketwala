@@ -1,0 +1,85 @@
+{% extends 'admin/base.html' %}
+{% block title %}Manage Users - The Market Wala{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-2xl font-space font-bold text-slate-900">Users (Paid)</h1>
+        <p class="text-slate-500">Users who have purchased at least one course</p>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-100">
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Name</th>
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Email</th>
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Phone</th>
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Course(s)</th>
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Role</th>
+                        <th class="text-left px-6 py-4 font-semibold text-slate-600">Joined</th>
+                        <th class="text-right px-6 py-4 font-semibold text-slate-600">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for user in users %}
+                    {% set purchases = user_purchases.get(user.id, []) %}
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center">
+                                    <span class="text-sm font-bold text-white font-space">{{ user.name[0]|upper }}</span>
+                                </div>
+                                <span class="font-medium text-slate-900">{{ user.name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-600">{{ user.email }}</td>
+                        <td class="px-6 py-4 text-slate-600">{{ purchases[0].customer_phone if purchases else '-' }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-wrap gap-1">
+                                {% for p in purchases %}
+                                <span class="badge bg-emerald-100 text-emerald-700 text-xs">{{ p.course.title }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if user.role == 'admin' %}
+                            <span class="badge bg-emerald-100 text-emerald-700">Admin</span>
+                            {% else %}
+                            <span class="badge bg-blue-100 text-blue-700">Student</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-slate-500">{{ user.created_at|format_date('%b %d, %Y') if user.created_at else 'N/A' }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <form action="{{ url_for('admin.change_user_role') }}" method="POST" class="inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <select name="role" onchange="this.form.submit()"
+                                            class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-emerald-500 focus:ring-3 focus:ring-emerald-500/15">
+                                        <option value="student" {{ 'selected' if user.role == 'student' }}>Student</option>
+                                        <option value="admin" {{ 'selected' if user.role == 'admin' }}>Admin</option>
+                                    </select>
+                                </form>
+                                <form action="{{ url_for('admin.delete_user') }}" method="POST" class="inline" onsubmit="return confirm('Delete this user permanently?')">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 transition p-1.5 rounded-lg hover:bg-red-50">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-slate-500">No paid users found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

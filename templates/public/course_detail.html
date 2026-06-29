@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }} - The Market Wala{% endblock %}
+{% block meta_description %}{{ course.description[:160] }}{% endblock %}
+
+{% block content %}
+<section class="pt-20 gradient-dark relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+            <div class="space-y-6 fade-in">
+                <div class="flex items-center gap-3">
+                    {% if course.category %}<span class="badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{{ course.category }}</span>{% endif %}
+                    <span class="badge bg-slate-700 text-slate-300">{{ course.difficulty }}</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-space font-bold text-white">{{ course.title }}</h1>
+                <p class="text-lg text-slate-400">{{ course.description }}</p>
+                <div class="flex flex-wrap gap-6 text-sm text-slate-400">
+                    {% if course.reading_time %}<span><i data-lucide="clock" class="w-4 h-4 inline"></i> {{ course.reading_time }}</span>{% endif %}
+                    <span><i data-lucide="users" class="w-4 h-4 inline"></i> {{ course.purchase_count() }} enrolled</span>
+                    <span><i data-lucide="book-open" class="w-4 h-4 inline"></i> {{ course.lecture_list()|length }} lectures</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-4xl font-bold text-white font-space">₹{{ "%.0f"|format(course.price) }}</span>
+                    <span class="text-sm text-slate-400 line-through">₹{{ "%.0f"|format(course.price * 2) }}</span>
+                    <span class="badge bg-emerald-500/10 text-emerald-400">50% OFF</span>
+                </div>
+                {% if current_user.is_authenticated %}
+                <button onclick="toggleBookmark({{ course.id }}, this)" class="flex items-center gap-2 text-sm {% if is_bookmarked %}text-emerald-400{% else %}text-slate-400{% endif %} hover:text-emerald-400 transition-all">
+                    <i data-lucide="bookmark" class="w-5 h-5 {% if is_bookmarked %}fill-emerald-400{% endif %}"></i>
+                    {% if is_bookmarked %}Bookmarked{% else %}Bookmark this Course{% endif %}
+                </button>
+                {% endif %}
+            </div>
+            <div class="fade-in fade-in-delay-2">
+                <div class="card overflow-hidden">
+                    <div class="h-56 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
+                        {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail }}" alt="{{ course.title }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <i data-lucide="bar-chart-3" class="w-20 h-20 text-emerald-300"></i>
+                        {% endif %}
+                    </div>
+                    {% if not is_purchased %}
+                    <div class="p-6 space-y-4">
+                        <h3 class="font-semibold text-slate-900">This course includes:</h3>
+                        <ul class="space-y-3 text-sm text-slate-600">
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Full lifetime access</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Live trading sessions</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Downloadable resources</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> Certificate of completion</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> WhatsApp community access</li>
+                            <li class="flex items-center gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i> 7-day money-back guarantee</li>
+                        </ul>
+                        <a href="{{ url_for('checkout.checkout_page', slug=course.slug) }}" class="btn-primary w-full text-center inline-block">Enroll Now - ₹{{ "%.0f"|format(course.price) }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% if is_purchased and content_html %}
+        <div class="mb-8 flex flex-wrap items-center gap-4">
+            {% if course.drive_link %}
+            <a href="{{ course.drive_link }}" target="_blank" class="btn-primary inline-flex items-center gap-2 text-sm py-2.5 px-5">
+                <i data-lucide="external-link" class="w-4 h-4"></i> Access Drive Resources
+            </a>
+            {% endif %}
+            {% if course.live_meeting_link %}
+            <a href="{{ course.live_meeting_link }}" target="_blank" class="btn-outline inline-flex items-center gap-2 text-sm py-2.5 px-5">
+                <i data-lucide="video" class="w-4 h-4"></i> Join Live Meeting
+            </a>
+            {% endif %}
+        </div>
+
+        {% if course.lecture_list() %}
+        <div class="card p-6 mb-8">
+            <h3 class="font-space font-semibold text-lg text-slate-900 mb-4">Lecture Schedule</h3>
+            <ul class="space-y-3">
+                {% for lecture in course.lecture_list() %}
+                <li class="flex items-center gap-3 text-sm text-slate-600">
+                    <i data-lucide="play-circle" class="w-4 h-4 text-emerald-500"></i>
+                    {{ lecture }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="markdown-content">
+            {{ content_html|safe }}
+        </div>
+        {% elif not is_purchased %}
+        <div class="text-center py-16">
+            <i data-lucide="lock" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
+            <h2 class="text-2xl font-space font-bold text-slate-900 mb-3">Content Locked</h2>
+            <p class="text-slate-500 mb-8 max-w-md mx-auto">Purchase this course to unlock the full curriculum, including video lessons, live sessions, and downloadable resources.</p>
+            <a href="{{ url_for('checkout.checkout_page', slug=course.slug) }}" class="btn-primary inline-flex items-center gap-2 text-lg px-8 py-3.5">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i> Buy Program - ₹{{ "%.0f"|format(course.price) }}
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-16">
+            <i data-lucide="file-text" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
+            <h2 class="text-xl font-semibold text-slate-600">No content available yet</h2>
+            <p class="text-slate-400 mt-2">Course content is being prepared. Check back soon!</p>
+        </div>
+        {% endif %}
+
+        <div class="mt-12 p-6 bg-amber-50 border border-amber-200 rounded-xl">
+            <div class="flex items-start gap-3">
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 mt-0.5"></i>
+                <div>
+                    <h4 class="font-semibold text-amber-800 text-sm">Risk Disclaimer</h4>
+                    <p class="text-sm text-amber-700 mt-1">Trading in the stock market involves substantial risk of loss. The content provided in this course is for educational purposes only and should not be considered financial advice. Past performance is not indicative of future results. Always do your own research before making investment decisions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if related %}
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-space font-bold text-slate-900 mb-8">Related Courses</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            {% for rc in related %}
+            <a href="{{ url_for('courses.course_detail', slug=rc.slug) }}" class="card overflow-hidden hover-lift group">
+                <div class="h-40 bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
+                    {% if rc.thumbnail %}<img src="{{ rc.thumbnail }}" class="w-full h-full object-cover">{% else %}<i data-lucide="bar-chart-3" class="w-12 h-12 text-emerald-300"></i>{% endif %}
+                </div>
+                <div class="p-5">
+                    <h3 class="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors">{{ rc.title }}</h3>
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="font-bold text-slate-900">₹{{ "%.0f"|format(rc.price) }}</span>
+                        <span class="text-sm text-emerald-600 font-medium">View →</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function toggleBookmark(courseId, btn) {
+    const form = new FormData();
+    form.append('course_id', courseId);
+    form.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
+    fetch('{{ url_for("student.toggle_bookmark") }}', { method: 'POST', body: form })
+    .then(r => r.json())
+    .then(data => {
+        const icon = btn.querySelector('i');
+        if (data.bookmarked) {
+            icon.classList.add('fill-emerald-400');
+            btn.classList.add('text-emerald-400');
+            btn.classList.remove('text-slate-400');
+            btn.childNodes[2].textContent = ' Bookmarked';
+        } else {
+            icon.classList.remove('fill-emerald-400');
+            btn.classList.remove('text-emerald-400');
+            btn.classList.add('text-slate-400');
+            btn.childNodes[2].textContent = ' Bookmark this Course';
+        }
+    });
+}
+</script>
+{% endblock %}
